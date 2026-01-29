@@ -3,7 +3,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HijriCalendar } from "@/components/HijriCalendar";
 import { SortingGame } from "@/components/SortingGame";
 import { QuizGame } from "@/components/QuizGame";
-import { Calendar, Gamepad2, Moon, BookOpen } from "lucide-react";
+import { BeforeAfterGame } from "@/components/BeforeAfterGame";
+import { TimeChallengeGame } from "@/components/TimeChallengeGame";
+import { Calendar, Gamepad2, Moon, BookOpen, ArrowLeftRight, Zap } from "lucide-react";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("calendar");
@@ -53,14 +55,22 @@ const Index = () => {
           <TabsContent value="game" className="space-y-6 mt-0">
             {/* Pilih Jenis Game */}
             <Tabs defaultValue="sorting" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 h-12">
-                <TabsTrigger value="sorting" className="flex items-center gap-2">
-                  <BookOpen className="h-4 w-4" />
-                  Susun Urutan
+              <TabsList className="grid w-full grid-cols-4 h-12">
+                <TabsTrigger value="sorting" className="flex items-center gap-1 text-xs sm:text-sm px-2">
+                  <BookOpen className="h-4 w-4 hidden sm:block" />
+                  Susun
                 </TabsTrigger>
-                <TabsTrigger value="quiz" className="flex items-center gap-2">
-                  <Gamepad2 className="h-4 w-4" />
-                  Pilihan Ganda
+                <TabsTrigger value="quiz" className="flex items-center gap-1 text-xs sm:text-sm px-2">
+                  <Gamepad2 className="h-4 w-4 hidden sm:block" />
+                  Quiz
+                </TabsTrigger>
+                <TabsTrigger value="beforeafter" className="flex items-center gap-1 text-xs sm:text-sm px-2">
+                  <ArrowLeftRight className="h-4 w-4 hidden sm:block" />
+                  Urutan
+                </TabsTrigger>
+                <TabsTrigger value="timechallenge" className="flex items-center gap-1 text-xs sm:text-sm px-2">
+                  <Zap className="h-4 w-4 hidden sm:block" />
+                  Tantangan
                 </TabsTrigger>
               </TabsList>
               
@@ -70,6 +80,14 @@ const Index = () => {
               
               <TabsContent value="quiz" className="mt-4">
                 <QuizGame />
+              </TabsContent>
+              
+              <TabsContent value="beforeafter" className="mt-4">
+                <BeforeAfterGame />
+              </TabsContent>
+              
+              <TabsContent value="timechallenge" className="mt-4">
+                <TimeChallengeGame />
               </TabsContent>
             </Tabs>
           </TabsContent>
