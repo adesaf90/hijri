@@ -20,7 +20,7 @@ const Index = () => {
             <h1 className="text-2xl sm:text-3xl font-bold">Hafal Bulan Hijriyah</h1>
           </div>
           <p className="text-primary-foreground/80 text-sm sm:text-base">
-            Belajar & hafal 12 bulan dalam kalender Islam dengan cara menyenangkan
+            Hijri App - Belajar & hafal 12 bulan dalam kalender Islam dengan cara menyenangkan
           </p>
         </div>
       </header>
@@ -97,6 +97,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="py-4 px-4 text-center text-muted-foreground text-sm border-t border-border mt-8">
         <p>Game Edukasi Islami • Ramah Anak • Bahasa Indonesia</p>
+        <p>By Ade Safroni - 2026</p>
       </footer>
     </div>
   );
