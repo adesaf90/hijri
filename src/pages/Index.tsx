@@ -30,15 +30,15 @@ const Index = () => {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           {/* Toggle Tab */}
           <TabsList className="grid w-full grid-cols-2 mb-6 h-14">
-            <TabsTrigger 
-              value="calendar" 
+            <TabsTrigger
+              value="calendar"
               className="flex items-center gap-2 text-base font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <Calendar className="h-5 w-5" />
               Kalender
             </TabsTrigger>
-            <TabsTrigger 
-              value="game" 
+            <TabsTrigger
+              value="game"
               className="flex items-center gap-2 text-base font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <Gamepad2 className="h-5 w-5" />
@@ -54,11 +54,11 @@ const Index = () => {
           {/* Mode Game */}
           <TabsContent value="game" className="space-y-6 mt-0">
             {/* Pilih Jenis Game */}
-            <Tabs defaultValue="sorting" className="w-full">
+            <Tabs defaultValue="timechallenge" className="w-full">
               <TabsList className="grid w-full grid-cols-4 h-12">
-                <TabsTrigger value="sorting" className="flex items-center gap-1 text-xs sm:text-sm px-2">
-                  <BookOpen className="h-4 w-4 hidden sm:block" />
-                  Susun
+                <TabsTrigger value="timechallenge" className="flex items-center gap-1 text-xs sm:text-sm px-2">
+                  <Zap className="h-4 w-4 hidden sm:block" />
+                  Tantangan
                 </TabsTrigger>
                 <TabsTrigger value="quiz" className="flex items-center gap-1 text-xs sm:text-sm px-2">
                   <Gamepad2 className="h-4 w-4 hidden sm:block" />
@@ -68,26 +68,22 @@ const Index = () => {
                   <ArrowLeftRight className="h-4 w-4 hidden sm:block" />
                   Urutan
                 </TabsTrigger>
-                <TabsTrigger value="timechallenge" className="flex items-center gap-1 text-xs sm:text-sm px-2">
-                  <Zap className="h-4 w-4 hidden sm:block" />
-                  Tantangan
+                <TabsTrigger value="sorting" className="flex items-center gap-1 text-xs sm:text-sm px-2">
+                  <BookOpen className="h-4 w-4 hidden sm:block" />
+                  Susun
                 </TabsTrigger>
               </TabsList>
-              
-              <TabsContent value="sorting" className="mt-4">
-                <SortingGame />
+              <TabsContent value="timechallenge" className="mt-4">
+                <TimeChallengeGame />
               </TabsContent>
-              
               <TabsContent value="quiz" className="mt-4">
                 <QuizGame />
               </TabsContent>
-              
               <TabsContent value="beforeafter" className="mt-4">
                 <BeforeAfterGame />
               </TabsContent>
-              
-              <TabsContent value="timechallenge" className="mt-4">
-                <TimeChallengeGame />
+              <TabsContent value="sorting" className="mt-4">
+                <SortingGame />
               </TabsContent>
             </Tabs>
           </TabsContent>
