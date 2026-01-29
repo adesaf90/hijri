@@ -2,16 +2,93 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { HIJRI_MONTHS, shuffleArray, HijriMonth } from "@/lib/hijriData";
-import { ArrowUp, ArrowDown, RotateCcw, Check, X, Trophy } from "lucide-react";
+import { RotateCcw, Check, X, Trophy, GripVertical } from "lucide-react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+
+interface SortableItemProps {
+  month: HijriMonth;
+  index: number;
+  isComplete: boolean;
+  isCorrect: boolean;
+}
+
+function SortableItem({ month, index, isComplete, isCorrect }: SortableItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: month.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`flex items-center gap-2 p-3 rounded-lg border-2 transition-colors ${
+        isDragging
+          ? "border-primary bg-primary/20 shadow-lg z-10"
+          : isComplete && isCorrect
+          ? "bg-success/10 border-success"
+          : "border-border hover:border-primary/50 bg-card"
+      }`}
+    >
+      <button
+        {...attributes}
+        {...listeners}
+        className="cursor-grab active:cursor-grabbing p-1 hover:bg-muted rounded touch-none"
+        aria-label="Drag to reorder"
+      >
+        <GripVertical className="h-5 w-5 text-muted-foreground" />
+      </button>
+      <span className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-sm font-medium">
+        {index + 1}
+      </span>
+      <span className="flex-1 font-medium">{month.name}</span>
+      <span className="text-muted-foreground text-sm">{month.arabic}</span>
+    </div>
+  );
+}
 
 export function SortingGame() {
   const [months, setMonths] = useState<HijriMonth[]>([]);
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [score, setScore] = useState(0);
-  const [attempts, setAttempts] = useState(0);
   const [isChecking, setIsChecking] = useState(false);
   const [feedback, setFeedback] = useState<{ correct: boolean; message: string } | null>(null);
   const [isComplete, setIsComplete] = useState(false);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   useEffect(() => {
     resetGame();
@@ -19,36 +96,29 @@ export function SortingGame() {
 
   const resetGame = () => {
     setMonths(shuffleArray([...HIJRI_MONTHS]));
-    setSelectedIndex(null);
     setScore(0);
-    setAttempts(0);
     setFeedback(null);
     setIsComplete(false);
     setIsChecking(false);
   };
 
-  const moveUp = (index: number) => {
-    if (index === 0 || isChecking) return;
-    const newMonths = [...months];
-    [newMonths[index - 1], newMonths[index]] = [newMonths[index], newMonths[index - 1]];
-    setMonths(newMonths);
-    setSelectedIndex(index - 1);
-  };
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
 
-  const moveDown = (index: number) => {
-    if (index === months.length - 1 || isChecking) return;
-    const newMonths = [...months];
-    [newMonths[index], newMonths[index + 1]] = [newMonths[index + 1], newMonths[index]];
-    setMonths(newMonths);
-    setSelectedIndex(index + 1);
+    if (over && active.id !== over.id) {
+      setMonths((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
   };
 
   const checkOrder = () => {
     setIsChecking(true);
-    setAttempts(attempts + 1);
-    
+
     const isCorrect = months.every((month, index) => month.id === index + 1);
-    
+
     if (isCorrect) {
       setScore(score + 1);
       setFeedback({ correct: true, message: "Benar! Urutan bulan Hijriyah sudah tepat! 🎉" });
@@ -78,7 +148,7 @@ export function SortingGame() {
       <CardContent className="pt-4">
         {/* Instruksi */}
         <p className="text-sm text-muted-foreground text-center mb-4">
-          Susun 12 bulan Hijriyah dari Muharram hingga Dzulhijjah dengan menggeser ke atas/bawah
+          Geser dan susun 12 bulan Hijriyah dari Muharram hingga Dzulhijjah
         </p>
 
         {/* Feedback */}
@@ -95,49 +165,26 @@ export function SortingGame() {
           </div>
         )}
 
-        {/* Daftar Bulan */}
-        <div className="space-y-2 mb-4">
-          {months.map((month, index) => (
-            <div
-              key={month.id}
-              className={`flex items-center gap-2 p-3 rounded-lg border-2 transition-all cursor-pointer ${
-                selectedIndex === index
-                  ? "border-primary bg-primary/10"
-                  : "border-border hover:border-primary/50"
-              } ${isComplete && month.id === index + 1 ? "bg-success/10 border-success" : ""}`}
-              onClick={() => !isChecking && setSelectedIndex(index)}
-            >
-              <span className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-sm font-medium">
-                {index + 1}
-              </span>
-              <span className="flex-1 font-medium">{month.name}</span>
-              <span className="text-muted-foreground text-sm">{month.arabic}</span>
-              
-              {selectedIndex === index && !isComplete && (
-                <div className="flex gap-1">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={(e) => { e.stopPropagation(); moveUp(index); }}
-                    disabled={index === 0}
-                  >
-                    <ArrowUp className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={(e) => { e.stopPropagation(); moveDown(index); }}
-                    disabled={index === months.length - 1}
-                  >
-                    <ArrowDown className="h-4 w-4" />
-                  </Button>
-                </div>
-              )}
+        {/* Daftar Bulan dengan Drag & Drop */}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext items={months.map((m) => m.id)} strategy={verticalListSortingStrategy}>
+            <div className="space-y-2 mb-4">
+              {months.map((month, index) => (
+                <SortableItem
+                  key={month.id}
+                  month={month}
+                  index={index}
+                  isComplete={isComplete}
+                  isCorrect={month.id === index + 1}
+                />
+              ))}
             </div>
-          ))}
-        </div>
+          </SortableContext>
+        </DndContext>
 
         {/* Tombol Aksi */}
         <div className="flex gap-2">
@@ -149,10 +196,7 @@ export function SortingGame() {
             <Check className="h-4 w-4 mr-2" />
             Periksa Urutan
           </Button>
-          <Button
-            variant="outline"
-            onClick={resetGame}
-          >
+          <Button variant="outline" onClick={resetGame}>
             <RotateCcw className="h-4 w-4 mr-2" />
             Acak Ulang
           </Button>
