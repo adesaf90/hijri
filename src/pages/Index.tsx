@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { HijriCalendar } from "@/components/HijriCalendar";
 import { SortingGame } from "@/components/SortingGame";
 import { QuizGame } from "@/components/QuizGame";
 import { BeforeAfterGame } from "@/components/BeforeAfterGame";
 import { TimeChallengeGame } from "@/components/TimeChallengeGame";
-import { Calendar, Gamepad2, Moon, BookOpen, ArrowLeftRight, Zap } from "lucide-react";
+import { Calendar, Gamepad2, Moon, BookOpen, ArrowLeftRight, Zap, MessageCircle } from "lucide-react";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("calendar");
@@ -91,9 +92,18 @@ const Index = () => {
       </main>
 
       {/* Footer */}
-      <footer className="py-4 px-4 text-center text-muted-foreground text-sm border-t border-border mt-8">
-        <p>Game Edukasi Islami • Ramah Anak • Bahasa Indonesia</p>
+      <footer className="py-6 px-4 text-center text-muted-foreground text-sm border-t border-border mt-8 flex flex-col items-center gap-3">
+        <p>Game Edukasi Islami • Ramah Anak</p>
         <p>By Ade Safroni - 2026</p>
+        <div className="flex items-center gap-2">
+          <span>Saran dan Kritik :</span>
+          <Button variant="outline" size="sm" className="gap-2 text-green-600 hover:text-green-700 hover:bg-green-50 border-green-200" asChild>
+            <a href="https://wa.me/6285724373664" target="_blank" rel="noopener noreferrer">
+              <MessageCircle className="h-4 w-4" />
+              WhatsApp
+            </a>
+          </Button>
+        </div>
       </footer>
     </div>
   );
