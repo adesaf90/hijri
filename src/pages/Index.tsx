@@ -6,7 +6,7 @@ import { QuizGame } from "@/components/QuizGame";
 import { Calendar, Gamepad2, Moon, BookOpen } from "lucide-react";
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState("game");
+  const [activeTab, setActiveTab] = useState("calendar");
 
   return (
     <div className="min-h-screen bg-background">
@@ -29,20 +29,25 @@ const Index = () => {
           {/* Toggle Tab */}
           <TabsList className="grid w-full grid-cols-2 mb-6 h-14">
             <TabsTrigger 
-              value="game" 
-              className="flex items-center gap-2 text-base font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-            >
-              <Gamepad2 className="h-5 w-5" />
-              Game
-            </TabsTrigger>
-            <TabsTrigger 
               value="calendar" 
               className="flex items-center gap-2 text-base font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <Calendar className="h-5 w-5" />
               Kalender
             </TabsTrigger>
+            <TabsTrigger 
+              value="game" 
+              className="flex items-center gap-2 text-base font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              <Gamepad2 className="h-5 w-5" />
+              Game
+            </TabsTrigger>
           </TabsList>
+
+          {/* Mode Kalender */}
+          <TabsContent value="calendar" className="mt-0">
+            <HijriCalendar />
+          </TabsContent>
 
           {/* Mode Game */}
           <TabsContent value="game" className="space-y-6 mt-0">
@@ -67,11 +72,6 @@ const Index = () => {
                 <QuizGame />
               </TabsContent>
             </Tabs>
-          </TabsContent>
-
-          {/* Mode Kalender */}
-          <TabsContent value="calendar" className="mt-0">
-            <HijriCalendar />
           </TabsContent>
         </Tabs>
       </main>
