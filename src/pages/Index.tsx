@@ -6,7 +6,11 @@ import { SortingGame } from "@/components/SortingGame";
 import { QuizGame } from "@/components/QuizGame";
 import { BeforeAfterGame } from "@/components/BeforeAfterGame";
 import { TimeChallengeGame } from "@/components/TimeChallengeGame";
-import { Calendar, Gamepad2, Moon, BookOpen, ArrowLeftRight, Zap, MessageCircle } from "lucide-react";
+import { FillGapGame } from "@/components/FillGapGame";
+import { QuickSortGame } from "@/components/QuickSortGame";
+import { TrueFalseGame } from "@/components/TrueFalseGame";
+import { MatchPairsGame } from "@/components/MatchPairsGame";
+import { Calendar, Gamepad2, Moon, BookOpen, ArrowLeftRight, Zap, MessageCircle, HelpCircle, ArrowUpDown, CheckCircle, Link2 } from "lucide-react";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("calendar");
@@ -56,26 +60,64 @@ const Index = () => {
           <TabsContent value="game" className="space-y-6 mt-0">
             {/* Pilih Jenis Game */}
             <Tabs defaultValue="timechallenge" className="w-full">
+              <TabsList className="grid w-full grid-cols-4 h-12 mb-2">
+                <TabsTrigger value="timechallenge" className="flex items-center gap-1 text-xs px-1">
+                  <Zap className="h-3 w-3" />
+                  <span className="hidden sm:inline">Tantangan</span>
+                  <span className="sm:hidden">⚡</span>
+                </TabsTrigger>
+                <TabsTrigger value="fillgap" className="flex items-center gap-1 text-xs px-1">
+                  <HelpCircle className="h-3 w-3" />
+                  <span className="hidden sm:inline">Lengkapi</span>
+                  <span className="sm:hidden">❓</span>
+                </TabsTrigger>
+                <TabsTrigger value="quicksort" className="flex items-center gap-1 text-xs px-1">
+                  <ArrowUpDown className="h-3 w-3" />
+                  <span className="hidden sm:inline">Cepat</span>
+                  <span className="sm:hidden">↕️</span>
+                </TabsTrigger>
+                <TabsTrigger value="truefalse" className="flex items-center gap-1 text-xs px-1">
+                  <CheckCircle className="h-3 w-3" />
+                  <span className="hidden sm:inline">B/S</span>
+                  <span className="sm:hidden">✓</span>
+                </TabsTrigger>
+              </TabsList>
               <TabsList className="grid w-full grid-cols-4 h-12">
-                <TabsTrigger value="timechallenge" className="flex items-center gap-1 text-xs sm:text-sm px-2">
-                  <Zap className="h-4 w-4 hidden sm:block" />
-                  Tantangan
+                <TabsTrigger value="matchpairs" className="flex items-center gap-1 text-xs px-1">
+                  <Link2 className="h-3 w-3" />
+                  <span className="hidden sm:inline">Pasangan</span>
+                  <span className="sm:hidden">🔗</span>
                 </TabsTrigger>
-                <TabsTrigger value="quiz" className="flex items-center gap-1 text-xs sm:text-sm px-2">
-                  <Gamepad2 className="h-4 w-4 hidden sm:block" />
-                  Quiz
+                <TabsTrigger value="quiz" className="flex items-center gap-1 text-xs px-1">
+                  <Gamepad2 className="h-3 w-3" />
+                  <span className="hidden sm:inline">Quiz</span>
+                  <span className="sm:hidden">🎮</span>
                 </TabsTrigger>
-                <TabsTrigger value="beforeafter" className="flex items-center gap-1 text-xs sm:text-sm px-2">
-                  <ArrowLeftRight className="h-4 w-4 hidden sm:block" />
-                  Urutan
+                <TabsTrigger value="beforeafter" className="flex items-center gap-1 text-xs px-1">
+                  <ArrowLeftRight className="h-3 w-3" />
+                  <span className="hidden sm:inline">Urutan</span>
+                  <span className="sm:hidden">↔️</span>
                 </TabsTrigger>
-                <TabsTrigger value="sorting" className="flex items-center gap-1 text-xs sm:text-sm px-2">
-                  <BookOpen className="h-4 w-4 hidden sm:block" />
-                  Susun
+                <TabsTrigger value="sorting" className="flex items-center gap-1 text-xs px-1">
+                  <BookOpen className="h-3 w-3" />
+                  <span className="hidden sm:inline">Susun</span>
+                  <span className="sm:hidden">📖</span>
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="timechallenge" className="mt-4">
                 <TimeChallengeGame />
+              </TabsContent>
+              <TabsContent value="fillgap" className="mt-4">
+                <FillGapGame />
+              </TabsContent>
+              <TabsContent value="quicksort" className="mt-4">
+                <QuickSortGame />
+              </TabsContent>
+              <TabsContent value="truefalse" className="mt-4">
+                <TrueFalseGame />
+              </TabsContent>
+              <TabsContent value="matchpairs" className="mt-4">
+                <MatchPairsGame />
               </TabsContent>
               <TabsContent value="quiz" className="mt-4">
                 <QuizGame />
