@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { HIJRI_MONTHS, shuffleArray, getTodayHijri } from "@/lib/hijriData";
-import { Timer, Play, RotateCcw, Check, X, Zap } from "lucide-react";
+import { Timer, Play, RotateCcw, Check, X, Zap, Trophy } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
 type QuestionType = "order" | "before" | "after";
@@ -61,11 +61,31 @@ function generateQuestion(): Question {
 }
 
 const INITIAL_TIME = 30;
+const HIGHSCORE_KEY = "hijri-timechallenge-highscore";
+
+function getStoredHighscore(): number {
+  try {
+    const stored = localStorage.getItem(HIGHSCORE_KEY);
+    return stored ? parseInt(stored, 10) : 0;
+  } catch {
+    return 0;
+  }
+}
+
+function setStoredHighscore(score: number): void {
+  try {
+    localStorage.setItem(HIGHSCORE_KEY, score.toString());
+  } catch {
+    // Ignore storage errors
+  }
+}
 
 export function TimeChallengeGame() {
   const [gameState, setGameState] = useState<"idle" | "playing" | "finished">("idle");
   const [question, setQuestion] = useState<Question | null>(null);
   const [score, setScore] = useState(0);
+  const [highscore, setHighscore] = useState(getStoredHighscore);
+  const [isNewHighscore, setIsNewHighscore] = useState(false);
   const [timeLeft, setTimeLeft] = useState(INITIAL_TIME);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<{ correct: boolean } | null>(null);
@@ -79,6 +99,7 @@ export function TimeChallengeGame() {
   const startGame = () => {
     setGameState("playing");
     setScore(0);
+    setIsNewHighscore(false);
     setTimeLeft(INITIAL_TIME);
     nextQuestion();
   };
@@ -86,6 +107,15 @@ export function TimeChallengeGame() {
   const endGame = useCallback(() => {
     setGameState("finished");
   }, []);
+
+  // Check and update highscore when game ends
+  useEffect(() => {
+    if (gameState === "finished" && score > highscore) {
+      setHighscore(score);
+      setStoredHighscore(score);
+      setIsNewHighscore(true);
+    }
+  }, [gameState, score, highscore]);
 
   // Timer countdown
   useEffect(() => {
@@ -158,15 +188,23 @@ export function TimeChallengeGame() {
           <div className="text-center py-8">
             <Zap className="h-16 w-16 mx-auto text-primary mb-4" />
             <h3 className="text-xl font-semibold mb-2">Time Challenge</h3>
-            <p className="text-muted-foreground mb-6">
+            <p className="text-muted-foreground mb-4">
               Jawab sebanyak mungkin dalam 30 detik!
               <br />
               Soal acak tentang urutan & posisi bulan Hijriyah.
             </p>
-            <Button onClick={startGame} size="lg">
-              <Play className="h-5 w-5 mr-2" />
-              Mulai Tantangan
-            </Button>
+            {highscore > 0 && (
+              <div className="mb-4 inline-flex items-center gap-2 bg-accent/50 px-4 py-2 rounded-full">
+                <Trophy className="h-5 w-5 text-accent-foreground" />
+                <span className="font-semibold">Skor Tertinggi: {highscore}</span>
+              </div>
+            )}
+            <div>
+              <Button onClick={startGame} size="lg">
+                <Play className="h-5 w-5 mr-2" />
+                Mulai Tantangan
+              </Button>
+            </div>
           </div>
         )}
 
@@ -227,18 +265,34 @@ export function TimeChallengeGame() {
         {/* Finished State */}
         {gameState === "finished" && (
           <div className="text-center py-8">
-            <div className="text-6xl mb-4">⏱️</div>
-            <h3 className="text-xl font-semibold mb-2">Waktu Habis!</h3>
+            {isNewHighscore ? (
+              <>
+                <Trophy className="h-16 w-16 mx-auto text-accent-foreground mb-4" />
+                <h3 className="text-xl font-semibold mb-2 text-accent-foreground">🎉 Rekor Baru!</h3>
+              </>
+            ) : (
+              <>
+                <div className="text-6xl mb-4">⏱️</div>
+                <h3 className="text-xl font-semibold mb-2">Waktu Habis!</h3>
+              </>
+            )}
             <p className="text-3xl font-bold text-primary mb-2">{score}</p>
-            <p className="text-muted-foreground mb-6">jawaban benar dalam 30 detik</p>
-            <Button onClick={startGame} size="lg" className="mr-2">
-              <Play className="h-5 w-5 mr-2" />
-              Main Lagi
-            </Button>
-            <Button onClick={resetGame} variant="outline" size="lg">
-              <RotateCcw className="h-5 w-5 mr-2" />
-              Kembali
-            </Button>
+            <p className="text-muted-foreground mb-2">jawaban benar dalam 30 detik</p>
+            {!isNewHighscore && highscore > 0 && (
+              <p className="text-sm text-muted-foreground mb-4">
+                Skor Tertinggi: {highscore}
+              </p>
+            )}
+            <div className="mt-4">
+              <Button onClick={startGame} size="lg" className="mr-2">
+                <Play className="h-5 w-5 mr-2" />
+                Main Lagi
+              </Button>
+              <Button onClick={resetGame} variant="outline" size="lg">
+                <RotateCcw className="h-5 w-5 mr-2" />
+                Kembali
+              </Button>
+            </div>
           </div>
         )}
       </CardContent>
